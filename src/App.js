@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Popover from '@mui/material/Popover';
+// import Popover from '@mui/material/Popover';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import { DialogContent } from "@mui/material";
 
 
 export default function App() {
 
   const [searchItem, setSearchItem] = useState("");
   const [userTyped, setUserTyped] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [open, setOpen] = useState(false)
+  const [picture, setPicture] = useState({})
+  // const [anchorEl, setAnchorEl] = useState(null);
+
 
   const searchPic = async () => {
     try {
@@ -28,15 +34,25 @@ export default function App() {
     setSearchItem(event.target.value)
   }
 
-  const handlePopover = (event) => {
-    setAnchorEl(event.currentTarget)
+  const handleDialog = (data) => {
+    setOpen(true)
+    setPicture(data)
   }
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  useEffect(() => {
+    console.log("dialog clicked", open)
+  }, [open])
+
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
+
+  // const open = Boolean(anchorEl);
+  // const id = open ? 'simple-popover' : undefined;
 
   return (
     <>
@@ -61,8 +77,8 @@ export default function App() {
               <td>
                 {userTyped.map((item) => (
                   <Box key={item.id}>
-                    <img src={item.src.medium} alt={item.alt} onClick={handlePopover} />
-                    <Popover
+                    <img src={item.src.medium} alt={item.alt} onClick={() => handleDialog(item)} />
+                    {/* <Popover
                       id={id}
                       open={open}
                       anchorEl={anchorEl}
@@ -78,7 +94,7 @@ export default function App() {
                       <Typography sx={{p:2}}>ID: {item.id}</Typography>
                       <Typography sx={{p:2}}>ID: {item.id}</Typography>
 
-                    </Popover>
+                    </Popover> */}
                   </Box>
                 ))}
               </td>
@@ -86,6 +102,20 @@ export default function App() {
           </table>
         </div>
       </Box>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>Picture Specs</DialogTitle>
+        <Box>
+        <DialogContent>{picture.id}</DialogContent>
+        <DialogContent>{picture.alt}</DialogContent>
+        <DialogContent>{picture.photographer}</DialogContent>
+        <DialogContent>{picture.photographer_id}</DialogContent>
+        <DialogContent>{picture.url}</DialogContent>
+        </Box>
+      </Dialog>
 
     </>
   );
